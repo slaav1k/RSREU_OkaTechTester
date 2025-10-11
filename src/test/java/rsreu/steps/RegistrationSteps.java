@@ -5,6 +5,7 @@ import io.cucumber.java.en.When;
 import io.cucumber.java.en.Then;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.firefox.FirefoxOptions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
@@ -12,6 +13,7 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import org.junit.Assert;
 
 import java.time.Duration;
+import java.util.List;
 
 public class RegistrationSteps {
     private WebDriver driver;
@@ -141,8 +143,17 @@ public class RegistrationSteps {
     public void checkErrorMessage(String errorMessage) {
         try {
             System.out.println("Проверяю сообщение об ошибке: " + errorMessage);
-            String actualMessage = wait.until(ExpectedConditions.visibilityOfElementLocated(By.className("validationError"))).getText();
-            Assert.assertEquals("Ожидаемое сообщение об ошибке не совпадает", errorMessage, actualMessage);
+            List<WebElement> errors = driver.findElements(By.className("validationError"));
+            boolean found = false;
+            for (WebElement error : errors) {
+                String actualMessage = error.getText();
+                System.out.println("Найденное сообщение: " + actualMessage);
+                if (actualMessage.equals(errorMessage)) {
+                    found = true;
+                    break;
+                }
+            }
+            Assert.assertTrue("Ожидаемое сообщение об ошибке '" + errorMessage + "' не найдено", found);
         } catch (Exception e) {
             throw new RuntimeException("Ошибка при проверке сообщения об ошибке: " + e.getMessage());
         }
