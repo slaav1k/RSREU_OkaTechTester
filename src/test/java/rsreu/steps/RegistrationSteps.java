@@ -11,6 +11,7 @@ import org.openqa.selenium.firefox.FirefoxOptions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.junit.Assert;
+import rsreu.WebDriverConfigs;
 
 import java.time.Duration;
 import java.util.List;
@@ -21,15 +22,15 @@ public class RegistrationSteps {
 
     public RegistrationSteps() {
         try {
-            // Указываем путь к geckodriver.exe
-            System.setProperty("webdriver.gecko.driver", "C:\\Users\\arkhi\\Desktop\\RADIK M\\geckodriver.exe");
-            // Настраиваем путь к Firefox
+            // Указываем путь к драйверу
+            System.setProperty(WebDriverConfigs.DRIVER, WebDriverConfigs.PATH_TO_DRIVER);
+            // Настраиваем путь к Firefox (Или хром аналогично, только меняйте на хром)
             FirefoxOptions options = new FirefoxOptions();
-            options.setBinary("C:\\Program Files\\Mozilla Firefox\\firefox.exe");
+            options.setBinary(WebDriverConfigs.PATH_TO_FIREFOX);
             this.driver = new FirefoxDriver(options);
-            this.wait = new WebDriverWait(driver, Duration.ofSeconds(15)); // Увеличен таймаут для надёжности
+            this.wait = new WebDriverWait(driver, Duration.ofSeconds(15));
         } catch (Exception e) {
-            throw new RuntimeException("Ошибка инициализации FirefoxDriver: " + e.getMessage());
+            throw new RuntimeException("Ошибка инициализации Driver: " + e.getMessage());
         }
     }
 

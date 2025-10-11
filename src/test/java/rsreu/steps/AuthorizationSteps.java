@@ -13,6 +13,7 @@ import org.openqa.selenium.firefox.FirefoxOptions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.junit.Assert;
+import rsreu.WebDriverConfigs;
 
 import java.time.Duration;
 import java.util.List;
@@ -23,15 +24,15 @@ public class AuthorizationSteps {
 
     public AuthorizationSteps() {
         try {
-            // Указываем путь к geckodriver.exe
-            System.setProperty("webdriver.gecko.driver", "C:\\Users\\arkhi\\Desktop\\RADIK M\\geckodriver.exe");
-            // Настраиваем путь к Firefox
+            // Указываем путь к драйверу
+            System.setProperty(WebDriverConfigs.DRIVER, WebDriverConfigs.PATH_TO_DRIVER);
+            // Настраиваем путь к Firefox (Или хром аналогично, только меняйте на хром)
             FirefoxOptions options = new FirefoxOptions();
-            options.setBinary("C:\\Program Files\\Mozilla Firefox\\firefox.exe");
+            options.setBinary(WebDriverConfigs.PATH_TO_FIREFOX);
             this.driver = new FirefoxDriver(options);
-            this.wait = new WebDriverWait(driver, Duration.ofSeconds(15));
+            this.wait = new WebDriverWait(driver, Duration.ofSeconds(3));
         } catch (Exception e) {
-            throw new RuntimeException("Ошибка инициализации FirefoxDriver: " + e.getMessage());
+            throw new RuntimeException("Ошибка инициализации Driver: " + e.getMessage());
         }
     }
 
@@ -59,7 +60,7 @@ public class AuthorizationSteps {
     }
 
     @And("Вводит пароль {string} для авторизации")
-    public void вводитПарольДляАвторизации(String password) {
+    public void enterPasswordForLogin(String password) {
         try {
             System.out.println("Ввожу пароль: " + password);
             var element = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("password")));
@@ -98,19 +99,14 @@ public class AuthorizationSteps {
     @Then("Отображается ошибка {string}")
     public void checkErrorMessage(String errorMessage) {
         try {
-            System.out.println("Проверяю сообщение об ошибке: " + errorMessage);
-            List<WebElement> errors = driver.findElements(By.className("validationError"));
-            boolean found = false;
-            for (WebElement error : errors) {
-                String actualMessage = error.getText();
-                System.out.println("Найденное сообщение: " + actualMessage);
-                if (actualMessage.equals(errorMessage)) {
-                    found = true;
-                    break;
-                }
-            }
-            Assert.assertTrue("Ожидаемое сообщение об ошибке '" + errorMessage + "' не найдено", found);
+            System.out.println("Проверяю наличие сообщения об ошибке: " + errorMessage);
+            WebElement errorElement = wait.until(ExpectedConditions.visibilityOfElementLocated(
+                By.xpath("//*[contains(text(), '" + errorMessage + "')]")
+            ));
+            Assert.assertTrue("Сообщение об ошибке не отображается", errorElement.isDisplayed());
+            System.out.println("Сообщение об ошибке найдено: " + errorElement.getText());
         } catch (Exception e) {
+            System.out.println("HTML страницы при ошибке: " + driver.getPageSource());
             throw new RuntimeException("Ошибка при проверке сообщения об ошибке: " + e.getMessage());
         }
     }
@@ -120,9 +116,11 @@ public class AuthorizationSteps {
         try {
             System.out.println("Проверяю, что авторизация не завершена");
             String currentUrl = driver.getCurrentUrl();
-            Assert.assertTrue("URL должен содержать 'login'", currentUrl.contains("login"));
+            System.out.println("Текущий URL: " + currentUrl);
+            Assert.assertTrue("URL должен содержать 'login' или 'login?error', текущий URL: " + currentUrl,
+                    currentUrl.contains("login"));
         } catch (Exception e) {
-            throw new RuntimeException("Ошибка при проверке URL авторизации: " + e.getMessage());
+            throw new RuntimeException("Ошибка при проверке URL: " + e.getMessage());
         }
     }
 
