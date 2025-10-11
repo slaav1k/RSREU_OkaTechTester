@@ -15,6 +15,7 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import org.junit.Assert;
 
 import java.time.Duration;
+import java.util.List;
 
 public class AuthorizationSteps {
     private WebDriver driver;
@@ -91,6 +92,26 @@ public class AuthorizationSteps {
             Assert.assertTrue("URL должен быть главной страницей", currentUrl.equals("http://localhost:8080/"));
         } catch (Exception e) {
             throw new RuntimeException("Ошибка при проверке перенаправления на главную страницу: " + e.getMessage());
+        }
+    }
+
+    @Then("Отображается ошибка {string}")
+    public void checkErrorMessage(String errorMessage) {
+        try {
+            System.out.println("Проверяю сообщение об ошибке: " + errorMessage);
+            List<WebElement> errors = driver.findElements(By.className("validationError"));
+            boolean found = false;
+            for (WebElement error : errors) {
+                String actualMessage = error.getText();
+                System.out.println("Найденное сообщение: " + actualMessage);
+                if (actualMessage.equals(errorMessage)) {
+                    found = true;
+                    break;
+                }
+            }
+            Assert.assertTrue("Ожидаемое сообщение об ошибке '" + errorMessage + "' не найдено", found);
+        } catch (Exception e) {
+            throw new RuntimeException("Ошибка при проверке сообщения об ошибке: " + e.getMessage());
         }
     }
 
