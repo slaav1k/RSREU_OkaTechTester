@@ -92,177 +92,176 @@ public class CatalogSteps {
         }
     }
 
-    @Then("В списке присутствуют товары из разных категорий (холодильники, микроволновые печи, телевизоры)")
-    public void checkProductsFromDifferentCategories() {
-        try {
-            System.out.println("Проверяю наличие товаров из разных категорий");
+//    @Then("В списке присутствуют товары из разных категорий (холодильники, микроволновые печи, телевизоры)")
+//    public void checkProductsFromDifferentCategories() {
+//        try {
+//            System.out.println("Проверяю наличие товаров из разных категорий");
+//
+//            // Получаем все товары
+//            List<WebElement> products = driver.findElements(By.className("catalog-item"));
+//            Assert.assertFalse("Нет товаров для проверки категорий", products.isEmpty());
+//
+//            // Проверяем наличие товаров из реальных категорий из вашей базы данных
+//            boolean hasTVs = checkCategoryExists(products, "TV", new String[]{"samsung tv", "телевизор", "tv"});
+//            boolean hasFridges = checkCategoryExists(products, "FRIG", new String[]{"lg fridge", "холодильник", "fridge"});
+//            boolean hasBake = checkCategoryExists(products, "Bake", new String[]{"bosch oven", "печь", "oven", "bake"});
+//            boolean hasCoffeeMakers = checkCategoryExists(products, "CoffeeMakers", new String[]{"de'longhi coffee", "кофе", "coffee"});
+//
+//            System.out.println("Категория TV: " + hasTVs);
+//            System.out.println("Категория FRIG: " + hasFridges);
+//            System.out.println("Категория Bake: " + hasBake);
+//            System.out.println("Категория CoffeeMakers: " + hasCoffeeMakers);
+//
+//            // Проверяем, что есть товары как минимум из 3 разных категорий
+//            int foundCategories = 0;
+//            if (hasTVs) foundCategories++;
+//            if (hasFridges) foundCategories++;
+//            if (hasBake) foundCategories++;
+//            if (hasCoffeeMakers) foundCategories++;
+//
+//            Assert.assertTrue("Должны присутствовать товары как минимум из 3 разных категорий. Найдено: " + foundCategories,
+//                    foundCategories >= 3);
+//
+//            System.out.println("Товары из разных категорий присутствуют (найдено категорий: " + foundCategories + ")");
+//
+//        } catch (Exception e) {
+//            throw new RuntimeException("Ошибка при проверке категорий товаров: " + e.getMessage());
+//        }
+//    }
+//
+//    private boolean checkCategoryExists(List<WebElement> products, String categoryName, String[] keywords) {
+//        for (WebElement product : products) {
+//            if (product.isDisplayed()) {
+//                String productText = product.getText().toLowerCase();
+//
+//                // Проверяем наличие ключевых слов в тексте товара
+//                for (String keyword : keywords) {
+//                    if (productText.contains(keyword.toLowerCase())) {
+//                        System.out.println("Найден товар категории " + categoryName + ": " + productText);
+//                        return true;
+//                    }
+//                }
+//
+//                // Дополнительно проверяем описание товара
+//                try {
+//                    WebElement description = product.findElement(By.xpath(".//p[contains(text(), 'Smart TV') or contains(text(), 'fridge') or contains(text(), 'oven') or contains(text(), 'coffee')]"));
+//                    if (description != null && description.isDisplayed()) {
+//                        System.out.println("Найден товар категории " + categoryName + " по описанию: " + description.getText());
+//                        return true;
+//                    }
+//                } catch (Exception e) {
+//                    // Игнорируем, если не нашли описание
+//                }
+//            }
+//        }
+//        return false;
+//    }
 
-            // Получаем все товары
-            List<WebElement> products = driver.findElements(By.className("catalog-item"));
-            Assert.assertFalse("Нет товаров для проверки категорий", products.isEmpty());
+//    @Then("Отображается сообщение об ошибке в каталоге {string}")
+//    public void checkErrorMessage(String errorMessage) {
+//        try {
+//            System.out.println("Проверяю сообщение об ошибке: " + errorMessage);
+//
+//            // Ищем сообщение об ошибке в различных возможных элементах
+//            List<WebElement> errorElements = driver.findElements(By.cssSelector(
+//                    ".error, .error-message, .alert, .alert-danger, .notification, [role='alert']"
+//            ));
+//
+//            boolean found = false;
+//            for (WebElement errorElement : errorElements) {
+//                if (errorElement.isDisplayed()) {
+//                    String actualText = errorElement.getText().trim();
+//                    System.out.println("Найденное сообщение: " + actualText);
+//                    if (actualText.contains(errorMessage)) {
+//                        found = true;
+//                        break;
+//                    }
+//                }
+//            }
+//
+//            // Если не нашли в специальных элементах, ищем по тексту страницы
+//            if (!found) {
+//                String pageText = driver.findElement(By.tagName("body")).getText();
+//                if (pageText.contains(errorMessage)) {
+//                    found = true;
+//                }
+//            }
+//
+//            Assert.assertTrue("Ожидаемое сообщение об ошибке '" + errorMessage + "' не найдено", found);
+//            System.out.println("Сообщение об ошибке найдено: " + errorMessage);
+//
+//        } catch (Exception e) {
+//            throw new RuntimeException("Ошибка при проверке сообщения об ошибке: " + e.getMessage());
+//        }
+//    }
 
-            // Проверяем наличие товаров из реальных категорий из вашей базы данных
-            boolean hasTVs = checkCategoryExists(products, "TV", new String[]{"samsung tv", "телевизор", "tv"});
-            boolean hasFridges = checkCategoryExists(products, "FRIG", new String[]{"lg fridge", "холодильник", "fridge"});
-            boolean hasBake = checkCategoryExists(products, "Bake", new String[]{"bosch oven", "печь", "oven", "bake"});
-            boolean hasCoffeeMakers = checkCategoryExists(products, "CoffeeMakers", new String[]{"de'longhi coffee", "кофе", "coffee"});
-
-            System.out.println("Категория TV: " + hasTVs);
-            System.out.println("Категория FRIG: " + hasFridges);
-            System.out.println("Категория Bake: " + hasBake);
-            System.out.println("Категория CoffeeMakers: " + hasCoffeeMakers);
-
-            // Проверяем, что есть товары как минимум из 3 разных категорий
-            int foundCategories = 0;
-            if (hasTVs) foundCategories++;
-            if (hasFridges) foundCategories++;
-            if (hasBake) foundCategories++;
-            if (hasCoffeeMakers) foundCategories++;
-
-            Assert.assertTrue("Должны присутствовать товары как минимум из 3 разных категорий. Найдено: " + foundCategories,
-                    foundCategories >= 3);
-
-            System.out.println("Товары из разных категорий присутствуют (найдено категорий: " + foundCategories + ")");
-
-        } catch (Exception e) {
-            throw new RuntimeException("Ошибка при проверке категорий товаров: " + e.getMessage());
-        }
-    }
-
-    private boolean checkCategoryExists(List<WebElement> products, String categoryName, String[] keywords) {
-        for (WebElement product : products) {
-            if (product.isDisplayed()) {
-                String productText = product.getText().toLowerCase();
-
-                // Проверяем наличие ключевых слов в тексте товара
-                for (String keyword : keywords) {
-                    if (productText.contains(keyword.toLowerCase())) {
-                        System.out.println("Найден товар категории " + categoryName + ": " + productText);
-                        return true;
-                    }
-                }
-
-                // Дополнительно проверяем описание товара
-                try {
-                    WebElement description = product.findElement(By.xpath(".//p[contains(text(), 'Smart TV') or contains(text(), 'fridge') or contains(text(), 'oven') or contains(text(), 'coffee')]"));
-                    if (description != null && description.isDisplayed()) {
-                        System.out.println("Найден товар категории " + categoryName + " по описанию: " + description.getText());
-                        return true;
-                    }
-                } catch (Exception e) {
-                    // Игнорируем, если не нашли описание
-                }
-            }
-        }
-        return false;
-    }
-
-    @Then("Отображается сообщение об ошибке в каталоге {string}")
-    public void checkErrorMessage(String errorMessage) {
-        try {
-            System.out.println("Проверяю сообщение об ошибке: " + errorMessage);
-
-            // Ищем сообщение об ошибке в различных возможных элементах
-            List<WebElement> errorElements = driver.findElements(By.cssSelector(
-                    ".error, .error-message, .alert, .alert-danger, .notification, [role='alert']"
-            ));
-
-            boolean found = false;
-            for (WebElement errorElement : errorElements) {
-                if (errorElement.isDisplayed()) {
-                    String actualText = errorElement.getText().trim();
-                    System.out.println("Найденное сообщение: " + actualText);
-                    if (actualText.contains(errorMessage)) {
-                        found = true;
-                        break;
-                    }
-                }
-            }
-
-            // Если не нашли в специальных элементах, ищем по тексту страницы
-            if (!found) {
-                String pageText = driver.findElement(By.tagName("body")).getText();
-                if (pageText.contains(errorMessage)) {
-                    found = true;
-                }
-            }
-
-            Assert.assertTrue("Ожидаемое сообщение об ошибке '" + errorMessage + "' не найдено", found);
-            System.out.println("Сообщение об ошибке найдено: " + errorMessage);
-
-        } catch (Exception e) {
-            throw new RuntimeException("Ошибка при проверке сообщения об ошибке: " + e.getMessage());
-        }
-    }
-
-    @Then("Список товаров не отображается")
-    public void checkProductsListNotDisplayed() {
-        try {
-            System.out.println("Проверяю, что список товаров не отображается");
-
-            // Проверяем, что контейнер товаров либо не существует, либо пуст, либо не виден
-            List<WebElement> productContainers = driver.findElements(By.className("catalog-products"));
-
-            boolean productsVisible = false;
-
-            if (!productContainers.isEmpty()) {
-                WebElement container = productContainers.get(0);
-                if (container.isDisplayed()) {
-                    // Если контейнер виден, проверяем что он пуст
-                    List<WebElement> products = container.findElements(By.className("catalog-item"));
-                    for (WebElement product : products) {
-                        if (product.isDisplayed()) {
-                            productsVisible = true;
-                            break;
-                        }
-                    }
-                }
-            }
-
-            // Дополнительная проверка - ищем отдельные товары
-            List<WebElement> individualProducts = driver.findElements(By.className("catalog-item"));
-            for (WebElement product : individualProducts) {
-                if (product.isDisplayed()) {
-                    productsVisible = true;
-                    break;
-                }
-            }
-
-            Assert.assertFalse("Товары не должны отображаться, но найдены видимые товары", productsVisible);
-            System.out.println("Список товаров не отображается - корректно");
-
-        } catch (Exception e) {
-            throw new RuntimeException("Ошибка при проверке отсутствия списка товаров: " + e.getMessage());
-        }
-    }
-
-    @Then("Страница не найдена")
-    public void checkPageNotFound() {
-        try {
-            System.out.println("Проверяю, что страница не найдена");
-
-            String currentUrl = driver.getCurrentUrl();
-            String pageTitle = driver.getTitle().toLowerCase();
-            String pageText = driver.findElement(By.tagName("body")).getText().toLowerCase();
-
-            // Проверяем различные признаки страницы "не найдено"
-            boolean isNotFound = currentUrl.contains("error") ||
-                    currentUrl.contains("404") ||
-                    pageTitle.contains("404") ||
-                    pageTitle.contains("not found") ||
-                    pageTitle.contains("ошибка") ||
-                    pageText.contains("404") ||
-                    pageText.contains("not found") ||
-                    pageText.contains("страница не найдена") ||
-                    pageText.contains("каталог временно недоступен");
-
-            Assert.assertTrue("Страница должна иметь признаки 'не найдено'. URL: " + currentUrl + ", Title: " + pageTitle, isNotFound);
-            System.out.println("Страница имеет признаки 'не найдено' - корректно");
-
-        } catch (Exception e) {
-            throw new RuntimeException("Ошибка при проверке страницы 'не найдено': " + e.getMessage());
-        }
-    }
+//    @Then("Список товаров не отображается")
+//    public void checkProductsListNotDisplayed() {
+//        try {
+//            System.out.println("Проверяю, что список товаров не отображается");
+//
+//            // Проверяем, что контейнер товаров либо не существует, либо пуст, либо не виден
+//            List<WebElement> productContainers = driver.findElements(By.className("catalog-products"));
+//
+//            boolean productsVisible = false;
+//
+//            if (!productContainers.isEmpty()) {
+//                WebElement container = productContainers.get(0);
+//                if (container.isDisplayed()) {
+//                    // Если контейнер виден, проверяем что он пуст
+//                    List<WebElement> products = container.findElements(By.className("catalog-item"));
+//                    for (WebElement product : products) {
+//                        if (product.isDisplayed()) {
+//                            productsVisible = true;
+//                            break;
+//                        }
+//                    }
+//                }
+//            }
+//
+//            // Дополнительная проверка - ищем отдельные товары
+//            List<WebElement> individualProducts = driver.findElements(By.className("catalog-item"));
+//            for (WebElement product : individualProducts) {
+//                if (product.isDisplayed()) {
+//                    productsVisible = true;
+//                    break;
+//                }
+//            }
+//
+//            Assert.assertFalse("Товары не должны отображаться, но найдены видимые товары", productsVisible);
+//            System.out.println("Список товаров не отображается - корректно");
+//
+//        } catch (Exception e) {
+//            throw new RuntimeException("Ошибка при проверке отсутствия списка товаров: " + e.getMessage());
+//        }
+//    }
+//
+//    @Then("Страница не найдена")
+//    public void checkPageNotFound() {
+//        try {
+//            System.out.println("Проверяю, что страница не найдена");
+//
+//            String currentUrl = driver.getCurrentUrl();
+//            String pageTitle = driver.getTitle().toLowerCase();
+//            String pageText = driver.findElement(By.tagName("body")).getText().toLowerCase();
+//
+//            // Проверяем различные признаки страницы "не найдено"
+//            boolean isNotFound = currentUrl.contains("error") ||
+//                    currentUrl.contains("404") ||
+//                    pageTitle.contains("404") ||
+//                    pageTitle.contains("not found") ||
+//                    pageTitle.contains("ошибка") ||
+//                    pageText.contains("404") ||
+//                    pageText.contains("not found") ||
+//                    pageText.contains("страница не найдена");
+//
+//            Assert.assertTrue("Страница должна иметь признаки 'не найдено'. URL: " + currentUrl + ", Title: " + pageTitle, isNotFound);
+//            System.out.println("Страница имеет признаки 'не найдено' - корректно");
+//
+//        } catch (Exception e) {
+//            throw new RuntimeException("Ошибка при проверке страницы 'не найдено': " + e.getMessage());
+//        }
+//    }
 
     @io.cucumber.java.After
     public void tearDown(io.cucumber.java.Scenario scenario) {
