@@ -32,7 +32,7 @@ public class CatalogSteps {
         }
     }
 
-    @Given("Открыта главная страница сайта")
+    @Given("Открыта главная вебстраница сайта")
     public void openMainPage() {
         try {
             System.out.println("Открываю главную страницу: http://localhost:8080/");
@@ -43,7 +43,7 @@ public class CatalogSteps {
         }
     }
 
-    @When("Пользователь нажимает на кнопку {string}")
+    @When("Пользователь нажимает в каталоге на кнопку {string}")
     public void clickButton(String buttonText) {
         try {
             System.out.println("Пытаюсь нажать на кнопку: " + buttonText);
@@ -157,7 +157,7 @@ public class CatalogSteps {
         return false;
     }
 
-    @Then("Отображается сообщение об ошибке {string}")
+    @Then("Отображается сообщение об ошибке в каталоге {string}")
     public void checkErrorMessage(String errorMessage) {
         try {
             System.out.println("Проверяю сообщение об ошибке: " + errorMessage);

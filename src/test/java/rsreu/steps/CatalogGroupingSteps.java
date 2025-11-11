@@ -197,7 +197,7 @@ public class CatalogGroupingSteps {
         return true;
     }
 
-    @Then("Отображается сообщение об ошибке {string}")
+    @Then("Отображается сообщение об ошибке при группировке {string}")
     public void checkErrorMessage(String errorMessage) {
         try {
             System.out.println("Проверяю сообщение об ошибке: " + errorMessage);
@@ -235,7 +235,7 @@ public class CatalogGroupingSteps {
         }
     }
 
-    @Then("Список товаров не отображается")
+    @Then("Список товаров при группировке не отображается")
     public void checkProductsListNotDisplayed() {
         try {
             System.out.println("Проверяю, что список товаров не отображается");

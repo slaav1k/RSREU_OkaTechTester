@@ -35,7 +35,7 @@ public class CatalogSortingSteps {
         }
     }
 
-    @Given("Пользователь находится в каталоге товаров")
+    @Given("Пользователь находится в каталоге товаров перед сортировкой")
     public void userIsInCatalog() {
         try {
             System.out.println("Перехожу в каталог товаров");
@@ -140,7 +140,7 @@ public class CatalogSortingSteps {
         }
     }
 
-    @Then("Отображается сообщение об ошибке {string}")
+    @Then("Отображается сообщение об ошибке при сортировке {string}")
     public void checkErrorMessage(String errorMessage) {
         try {
             System.out.println("Проверяю сообщение об ошибке: " + errorMessage);
