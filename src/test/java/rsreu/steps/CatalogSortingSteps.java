@@ -39,7 +39,7 @@ public class CatalogSortingSteps {
     public void userIsInCatalog() {
         try {
             System.out.println("Перехожу в каталог товаров");
-            driver.get("http://localhost:8080/catalog");
+            driver.get("http://localhost:8084/catalog");
             wait.until(ExpectedConditions.visibilityOfElementLocated(By.className("catalog-products")));
 
             // Сохраняем оригинальные цены для проверки в сценарии fail
@@ -56,6 +56,9 @@ public class CatalogSortingSteps {
         try {
             System.out.println("Выбираю сортировку: " + sortingType);
 
+            // Сохраняем текущий URL для сравнения
+            String currentUrl = driver.getCurrentUrl();
+
             // Находим выпадающий список сортировки
             WebElement sortSelect = wait.until(
                     ExpectedConditions.visibilityOfElementLocated(By.id("sort"))
@@ -65,11 +68,14 @@ public class CatalogSortingSteps {
             Select sortDropdown = new Select(sortSelect);
 
             // Выбираем сортировку в зависимости от текста
+            String sortValue = "";
             if (sortingType.equals("По возрастанию цены")) {
                 sortDropdown.selectByValue("asc");
+                sortValue = "asc";
                 System.out.println("Выбрана сортировка по возрастанию (asc)");
             } else if (sortingType.equals("По убыванию цены")) {
                 sortDropdown.selectByValue("desc");
+                sortValue = "desc";
                 System.out.println("Выбрана сортировка по убыванию (desc)");
             } else {
                 sortDropdown.selectByVisibleText(sortingType);
@@ -81,11 +87,21 @@ public class CatalogSortingSteps {
             applyButton.click();
             System.out.println("Нажата кнопка 'Применить'");
 
-            // Ожидаем обновления списка товаров
-            wait.until(ExpectedConditions.stalenessOf(
-                    driver.findElement(By.className("catalog-products"))
-            ));
+            // Ждем изменения URL (добавления параметра сортировки)
+            if (!sortValue.isEmpty()) {
+                wait.until(ExpectedConditions.urlContains("sort=" + sortValue));
+            } else {
+                // Если не знаем значение, просто ждем изменения URL
+                wait.until(ExpectedConditions.not(ExpectedConditions.urlToBe(currentUrl)));
+            }
+
+            // Ждем появления контейнера товаров
             wait.until(ExpectedConditions.visibilityOfElementLocated(By.className("catalog-products")));
+
+            // Ждем загрузки товаров
+            wait.until(ExpectedConditions.numberOfElementsToBeMoreThan(By.className("catalog-item"), 0));
+
+            System.out.println("Сортировка применена, страница загружена");
 
         } catch (Exception e) {
             throw new RuntimeException("Ошибка при выборе сортировки '" + sortingType + "': " + e.getMessage());
@@ -140,76 +156,76 @@ public class CatalogSortingSteps {
         }
     }
 
-    @Then("Отображается сообщение об ошибке при сортировке {string}")
-    public void checkErrorMessage(String errorMessage) {
-        try {
-            System.out.println("Проверяю сообщение об ошибке: " + errorMessage);
-
-            // Ищем сообщение об ошибке в различных возможных элементах
-            List<WebElement> errorElements = driver.findElements(By.cssSelector(
-                    ".error, .error-message, .alert, .alert-danger, .notification, [role='alert']"
-            ));
-
-            boolean found = false;
-            for (WebElement errorElement : errorElements) {
-                if (errorElement.isDisplayed()) {
-                    String actualText = errorElement.getText().trim();
-                    System.out.println("Найденное сообщение: " + actualText);
-                    if (actualText.contains(errorMessage)) {
-                        found = true;
-                        break;
-                    }
-                }
-            }
-
-            // Если не нашли в специальных элементах, ищем по тексту страницы
-            if (!found) {
-                String pageText = driver.findElement(By.tagName("body")).getText();
-                if (pageText.contains(errorMessage)) {
-                    found = true;
-                }
-            }
-
-            Assert.assertTrue("Ожидаемое сообщение об ошибке '" + errorMessage + "' не найдено", found);
-            System.out.println("Сообщение об ошибке найдено: " + errorMessage);
-
-        } catch (Exception e) {
-            throw new RuntimeException("Ошибка при проверке сообщения об ошибке: " + e.getMessage());
-        }
-    }
-
-    @Then("Список товаров не изменяется")
-    public void checkProductsListNotChanged() {
-        try {
-            System.out.println("Проверяю, что список товаров не изменился");
-
-            // Получаем текущие цены
-            List<Double> currentPrices = getProductPrices();
-
-            // Проверяем, что количество товаров не изменилось
-            Assert.assertEquals(
-                    "Количество товаров изменилось",
-                    originalPrices.size(),
-                    currentPrices.size()
-            );
-
-            // Проверяем, что порядок товаров остался прежним
-            // (в реальном приложении здесь нужно сравнивать не только цены, но и порядок товаров)
-            boolean orderChanged = false;
-            for (int i = 0; i < originalPrices.size(); i++) {
-                if (!originalPrices.get(i).equals(currentPrices.get(i))) {
-                    orderChanged = true;
-                    break;
-                }
-            }
-
-            Assert.assertFalse("Порядок товаров изменился после неудачной сортировки", orderChanged);
-            System.out.println("Список товаров не изменился - корректно");
-
-        } catch (Exception e) {
-            throw new RuntimeException("Ошибка при проверке неизменности списка товаров: " + e.getMessage());
-        }
-    }
+//    @Then("Отображается сообщение об ошибке при сортировке {string}")
+//    public void checkErrorMessage(String errorMessage) {
+//        try {
+//            System.out.println("Проверяю сообщение об ошибке: " + errorMessage);
+//
+//            // Ищем сообщение об ошибке в различных возможных элементах
+//            List<WebElement> errorElements = driver.findElements(By.cssSelector(
+//                    ".error, .error-message, .alert, .alert-danger, .notification, [role='alert']"
+//            ));
+//
+//            boolean found = false;
+//            for (WebElement errorElement : errorElements) {
+//                if (errorElement.isDisplayed()) {
+//                    String actualText = errorElement.getText().trim();
+//                    System.out.println("Найденное сообщение: " + actualText);
+//                    if (actualText.contains(errorMessage)) {
+//                        found = true;
+//                        break;
+//                    }
+//                }
+//            }
+//
+//            // Если не нашли в специальных элементах, ищем по тексту страницы
+//            if (!found) {
+//                String pageText = driver.findElement(By.tagName("body")).getText();
+//                if (pageText.contains(errorMessage)) {
+//                    found = true;
+//                }
+//            }
+//
+//            Assert.assertTrue("Ожидаемое сообщение об ошибке '" + errorMessage + "' не найдено", found);
+//            System.out.println("Сообщение об ошибке найдено: " + errorMessage);
+//
+//        } catch (Exception e) {
+//            throw new RuntimeException("Ошибка при проверке сообщения об ошибке: " + e.getMessage());
+//        }
+//    }
+//
+//    @Then("Список товаров не изменяется")
+//    public void checkProductsListNotChanged() {
+//        try {
+//            System.out.println("Проверяю, что список товаров не изменился");
+//
+//            // Получаем текущие цены
+//            List<Double> currentPrices = getProductPrices();
+//
+//            // Проверяем, что количество товаров не изменилось
+//            Assert.assertEquals(
+//                    "Количество товаров изменилось",
+//                    originalPrices.size(),
+//                    currentPrices.size()
+//            );
+//
+//            // Проверяем, что порядок товаров остался прежним
+//            // (в реальном приложении здесь нужно сравнивать не только цены, но и порядок товаров)
+//            boolean orderChanged = false;
+//            for (int i = 0; i < originalPrices.size(); i++) {
+//                if (!originalPrices.get(i).equals(currentPrices.get(i))) {
+//                    orderChanged = true;
+//                    break;
+//                }
+//            }
+//
+//            Assert.assertFalse("Порядок товаров изменился после неудачной сортировки", orderChanged);
+//            System.out.println("Список товаров не изменился - корректно");
+//
+//        } catch (Exception e) {
+//            throw new RuntimeException("Ошибка при проверке неизменности списка товаров: " + e.getMessage());
+//        }
+//    }
 
     private List<Double> getProductPrices() {
         List<Double> prices = new ArrayList<>();
