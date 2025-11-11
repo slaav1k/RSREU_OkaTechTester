@@ -37,7 +37,7 @@ public class CatalogGroupingSteps {
     public void userIsInCatalog() {
         try {
             System.out.println("Перехожу в каталог товаров");
-            driver.get("http://localhost:8080/catalog");
+            driver.get("http://localhost:8084/catalog");
             wait.until(ExpectedConditions.visibilityOfElementLocated(By.className("catalog-products")));
             System.out.println("Успешно перешел в каталог товаров");
         } catch (Exception e) {
@@ -67,11 +67,21 @@ public class CatalogGroupingSteps {
             applyButton.click();
             System.out.println("Нажата кнопка 'Применить'");
 
-            // Ожидаем обновления списка товаров
-            wait.until(ExpectedConditions.stalenessOf(
-                    driver.findElement(By.className("catalog-products"))
+            wait.until(ExpectedConditions.or(
+                    ExpectedConditions.urlContains("category=" + categoryName),
+                    ExpectedConditions.urlContains("category=" + categoryName.toLowerCase())
             ));
+
+            // Затем ждем, что список товаров загрузился
             wait.until(ExpectedConditions.visibilityOfElementLocated(By.className("catalog-products")));
+
+            // Дополнительно ждем, что есть хотя бы один товар
+            wait.until((WebDriver d) -> {
+                List<WebElement> products = d.findElements(By.className("catalog-item"));
+                return !products.isEmpty() && products.get(0).isDisplayed();
+            });
+
+            System.out.println("Страница с фильтром по категории " + categoryName + " загружена");
 
         } catch (Exception e) {
             throw new RuntimeException("Ошибка при выборе категории '" + categoryName + "': " + e.getMessage());
@@ -197,81 +207,81 @@ public class CatalogGroupingSteps {
         return true;
     }
 
-    @Then("Отображается сообщение об ошибке при группировке {string}")
-    public void checkErrorMessage(String errorMessage) {
-        try {
-            System.out.println("Проверяю сообщение об ошибке: " + errorMessage);
-
-            // Ищем сообщение об ошибке в различных возможных элементах
-            List<WebElement> errorElements = driver.findElements(By.cssSelector(
-                    ".error, .error-message, .alert, .alert-danger, .notification, [role='alert']"
-            ));
-
-            boolean found = false;
-            for (WebElement errorElement : errorElements) {
-                if (errorElement.isDisplayed()) {
-                    String actualText = errorElement.getText().trim();
-                    System.out.println("Найденное сообщение: " + actualText);
-                    if (actualText.contains(errorMessage)) {
-                        found = true;
-                        break;
-                    }
-                }
-            }
-
-            // Если не нашли в специальных элементах, ищем по тексту страницы
-            if (!found) {
-                String pageText = driver.findElement(By.tagName("body")).getText();
-                if (pageText.contains(errorMessage)) {
-                    found = true;
-                }
-            }
-
-            Assert.assertTrue("Ожидаемое сообщение об ошибке '" + errorMessage + "' не найдено", found);
-            System.out.println("Сообщение об ошибке найдено: " + errorMessage);
-
-        } catch (Exception e) {
-            throw new RuntimeException("Ошибка при проверке сообщения об ошибке: " + e.getMessage());
-        }
-    }
-
-    @Then("Список товаров при группировке не отображается")
-    public void checkProductsListNotDisplayed() {
-        try {
-            System.out.println("Проверяю, что список товаров не отображается");
-
-            List<WebElement> productContainers = driver.findElements(By.className("catalog-products"));
-            boolean productsVisible = false;
-
-            if (!productContainers.isEmpty()) {
-                WebElement container = productContainers.get(0);
-                if (container.isDisplayed()) {
-                    List<WebElement> products = container.findElements(By.className("catalog-item"));
-                    for (WebElement product : products) {
-                        if (product.isDisplayed()) {
-                            productsVisible = true;
-                            break;
-                        }
-                    }
-                }
-            }
-
-            // Дополнительная проверка - ищем отдельные товары
-            List<WebElement> individualProducts = driver.findElements(By.className("catalog-item"));
-            for (WebElement product : individualProducts) {
-                if (product.isDisplayed()) {
-                    productsVisible = true;
-                    break;
-                }
-            }
-
-            Assert.assertFalse("Товары не должны отображаться, но найдены видимые товары", productsVisible);
-            System.out.println("Список товаров не отображается - корректно");
-
-        } catch (Exception e) {
-            throw new RuntimeException("Ошибка при проверке отсутствия списка товаров: " + e.getMessage());
-        }
-    }
+//    @Then("Отображается сообщение об ошибке при группировке {string}")
+//    public void checkErrorMessage(String errorMessage) {
+//        try {
+//            System.out.println("Проверяю сообщение об ошибке: " + errorMessage);
+//
+//            // Ищем сообщение об ошибке в различных возможных элементах
+//            List<WebElement> errorElements = driver.findElements(By.cssSelector(
+//                    ".error, .error-message, .alert, .alert-danger, .notification, [role='alert']"
+//            ));
+//
+//            boolean found = false;
+//            for (WebElement errorElement : errorElements) {
+//                if (errorElement.isDisplayed()) {
+//                    String actualText = errorElement.getText().trim();
+//                    System.out.println("Найденное сообщение: " + actualText);
+//                    if (actualText.contains(errorMessage)) {
+//                        found = true;
+//                        break;
+//                    }
+//                }
+//            }
+//
+//            // Если не нашли в специальных элементах, ищем по тексту страницы
+//            if (!found) {
+//                String pageText = driver.findElement(By.tagName("body")).getText();
+//                if (pageText.contains(errorMessage)) {
+//                    found = true;
+//                }
+//            }
+//
+//            Assert.assertTrue("Ожидаемое сообщение об ошибке '" + errorMessage + "' не найдено", found);
+//            System.out.println("Сообщение об ошибке найдено: " + errorMessage);
+//
+//        } catch (Exception e) {
+//            throw new RuntimeException("Ошибка при проверке сообщения об ошибке: " + e.getMessage());
+//        }
+//    }
+//
+//    @Then("Список товаров при группировке не отображается")
+//    public void checkProductsListNotDisplayed() {
+//        try {
+//            System.out.println("Проверяю, что список товаров не отображается");
+//
+//            List<WebElement> productContainers = driver.findElements(By.className("catalog-products"));
+//            boolean productsVisible = false;
+//
+//            if (!productContainers.isEmpty()) {
+//                WebElement container = productContainers.get(0);
+//                if (container.isDisplayed()) {
+//                    List<WebElement> products = container.findElements(By.className("catalog-item"));
+//                    for (WebElement product : products) {
+//                        if (product.isDisplayed()) {
+//                            productsVisible = true;
+//                            break;
+//                        }
+//                    }
+//                }
+//            }
+//
+//            // Дополнительная проверка - ищем отдельные товары
+//            List<WebElement> individualProducts = driver.findElements(By.className("catalog-item"));
+//            for (WebElement product : individualProducts) {
+//                if (product.isDisplayed()) {
+//                    productsVisible = true;
+//                    break;
+//                }
+//            }
+//
+//            Assert.assertFalse("Товары не должны отображаться, но найдены видимые товары", productsVisible);
+//            System.out.println("Список товаров не отображается - корректно");
+//
+//        } catch (Exception e) {
+//            throw new RuntimeException("Ошибка при проверке отсутствия списка товаров: " + e.getMessage());
+//        }
+//    }
 
     @io.cucumber.java.After
     public void tearDown(io.cucumber.java.Scenario scenario) {

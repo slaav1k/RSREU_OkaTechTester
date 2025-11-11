@@ -35,8 +35,8 @@ public class CatalogSteps {
     @Given("Открыта главная вебстраница сайта")
     public void openMainPage() {
         try {
-            System.out.println("Открываю главную страницу: http://localhost:8080/");
-            driver.get("http://localhost:8080/");
+            System.out.println("Открываю главную страницу: http://localhost:8084/");
+            driver.get("http://localhost:8084/");
             wait.until(ExpectedConditions.visibilityOfElementLocated(By.tagName("body")));
         } catch (Exception e) {
             throw new RuntimeException("Ошибка при открытии главной страницы: " + e.getMessage());
