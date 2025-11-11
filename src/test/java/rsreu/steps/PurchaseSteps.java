@@ -16,11 +16,11 @@ import rsreu.WebDriverConfigs;
 import java.time.Duration;
 import java.util.List;
 
-public class PurchasingSteps {
+public class PurchaseSteps {
     private WebDriver driver;
     private WebDriverWait wait;
 
-    public PurchasingSteps() {
+    public PurchaseSteps() {
         try {
             // Указываем путь к драйверу
             System.setProperty(WebDriverConfigs.DRIVER, WebDriverConfigs.PATH_TO_DRIVER);
