@@ -7,7 +7,7 @@ import org.junit.runner.RunWith;
 
 @RunWith(Cucumber.class)
 @CucumberOptions(
-        features = "src/test/resources/features/sort.feature",
+        features = "src/test/resources/features/",
         glue = "rsreu.steps",
         tags = "@success or @fail",
         snippets = CucumberOptions.SnippetType.UNDERSCORE,

@@ -37,7 +37,7 @@ public class CatalogGroupingSteps {
     public void userIsInCatalog() {
         try {
             System.out.println("Перехожу в каталог товаров");
-            driver.get("http://localhost:8084/catalog");
+            driver.get("http://localhost:8080/catalog");
             wait.until(ExpectedConditions.visibilityOfElementLocated(By.className("catalog-products")));
             System.out.println("Успешно перешел в каталог товаров");
         } catch (Exception e) {
